@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct CgcStack
+typedef struct CGC_Stack
 {
     void *start;
     void *next;
@@ -13,17 +13,21 @@ typedef struct CgcStack
     __uint32_t capacity;
     __uint32_t count;
     size_t element_size;
-} CgcStack;
+} CGC_Stack;
 
-void CgcStack_Init(CgcStack*, __uint32_t, size_t);
-void CgcStack_Free(CgcStack*);
+void CGC_Stack_Init(CGC_Stack*, __uint32_t, size_t);
+void CGC_Stack_Free(CGC_Stack*);
 
-int CgcStack_Push(CgcStack*, const void*);
-int CgcStack_Pop(CgcStack*, void*);
-int CgcStack_IsEmpty(CgcStack*);
-int CgcStack_IsFull(CgcStack*);
+int CGC_Stack_Push(CGC_Stack*, const void*);
+int CGC_Stack_Peek(CGC_Stack*, void*);
+int CGC_Stack_Pop(CGC_Stack*, void*);
+void CGC_Stack_Clear(CGC_Stack*);
 
-__uint32_t CgcStack_Count(CgcStack*);
-__uint32_t CgcStack_Capacity(CgcStack*);
+int CGC_Stack_IsEmpty(CGC_Stack*);
+int CGC_Stack_IsFull(CGC_Stack*);
+int CGC_Stack_Contains(CGC_Stack*, void*);
+
+__uint32_t CGC_Stack_Count(CGC_Stack*);
+__uint32_t CGC_Stack_Capacity(CGC_Stack*);
 
 #endif

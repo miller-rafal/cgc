@@ -1,6 +1,6 @@
 #include "stack.h"
 
-void CgcStack_Init(CgcStack *stack, __uint32_t capacity, size_t element_size)
+void CGC_Stack_Init(CGC_Stack *stack, __uint32_t capacity, size_t element_size)
 {
     stack->capacity = capacity;
     stack->count = 0;
@@ -11,7 +11,7 @@ void CgcStack_Init(CgcStack *stack, __uint32_t capacity, size_t element_size)
     stack->top = stack->start;
 }
 
-void CgcStack_Free(CgcStack *stack)
+void CGC_Stack_Free(CGC_Stack *stack)
 {
     stack->capacity = 0;
     stack->count = 0;
@@ -19,7 +19,7 @@ void CgcStack_Free(CgcStack *stack)
     free(stack->start);
 }
 
-int CgcStack_Push(CgcStack* stack, const void *element)
+int CGC_Stack_Push(CGC_Stack* stack, const void *element)
 {
     if(stack->count == stack->capacity)
     {
@@ -35,7 +35,19 @@ int CgcStack_Push(CgcStack* stack, const void *element)
     return 1;
 }
 
-int CgcStack_Pop(CgcStack *stack, void *element)
+int CGC_Stack_Peek(CGC_Stack *stack, void *element)
+{
+    if(stack->count == 0)
+    {
+        return 0;
+    }
+
+    memcpy(element, stack->top, stack->element_size);
+
+    return 1;
+}
+
+int CGC_Stack_Pop(CGC_Stack *stack, void *element)
 {
     if(stack->count == 0)
     {
@@ -45,21 +57,28 @@ int CgcStack_Pop(CgcStack *stack, void *element)
     memcpy(element, stack->top, stack->element_size);
     stack->count--;
 
+    stack->top -= stack->element_size;
+    
     if(stack->count == 0)
     {
-        stack->top = stack->start;
         stack->next = stack->start;
     }
     else
     {
-        stack->top -= stack->element_size;
         stack->next -= stack->element_size;
     }
 
     return 1;
 }
 
-int CgcStack_IsEmpty(CgcStack *stack)
+void CGC_Stack_Clear(CGC_Stack *stack)
+{
+    stack->count = 0;
+    stack->next = stack->start;
+    stack->top = stack->start;
+}
+
+int CGC_Stack_IsEmpty(CGC_Stack *stack)
 {
     if(stack->count == 0)
     {
@@ -69,7 +88,7 @@ int CgcStack_IsEmpty(CgcStack *stack)
     return 0;
 }
 
-int CgcStack_IsFull(CgcStack *stack)
+int CGC_Stack_IsFull(CGC_Stack *stack)
 {
     if(stack->count == stack->capacity)
     {
@@ -79,12 +98,32 @@ int CgcStack_IsFull(CgcStack *stack)
     return 0;
 }
 
-__uint32_t CgcStack_Count(CgcStack *stack)
+int CGC_Stack_Contains(CGC_Stack *stack, void *element)
+{
+    int cmp_res;
+    void *ptr = stack->start;
+
+    for(int i = 0; i < stack->count; i++)
+    {
+        cmp_res = memcmp(ptr, element, stack->element_size);
+
+        if(cmp_res == 0)
+        {
+            return 1;
+        }
+
+        ptr += stack->element_size;
+    }
+
+    return 0;
+}
+
+__uint32_t CGC_Stack_Count(CGC_Stack *stack)
 {
     return stack->count;
 }
 
-__uint32_t CgcStack_Capacity(CgcStack *stack)
+__uint32_t CGC_Stack_Capacity(CGC_Stack *stack)
 {
     return stack->capacity;
 }
