@@ -17,7 +17,7 @@ typedef struct CGC_Queue
 void CGC_Queue_Init(CGC_Queue*, __uint32_t, size_t);
 void CGC_Queue_Free(CGC_Queue*);
 
-int CGC_Queue_Enqueue(CGC_Queue*, void*);
+int CGC_Queue_Enqueue(CGC_Queue*, const void*);
 int CGC_Queue_Peek(CGC_Queue*, void*);
 int CGC_Queue_Dequeue(CGC_Queue*, void*);
 void CGC_Queue_Clear(CGC_Queue*);

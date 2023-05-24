@@ -1,6 +1,6 @@
 #include "queue.h"
 
-static void CGC_Queue_Shift_Elements(CGC_Queue *queue)
+static void CGC_Queue_Shift_Right(CGC_Queue *queue)
 {
     int index = ((int) queue->count) - 1;
 
@@ -10,6 +10,11 @@ static void CGC_Queue_Shift_Elements(CGC_Queue *queue)
         void *next_element = element + queue->element_size;
 
         memcpy(next_element, element, queue->element_size);
+    }
+
+    if(index >= 0)
+    {
+        queue->head += queue->element_size;
     }
 }
 
@@ -31,25 +36,21 @@ void CGC_Queue_Free(CGC_Queue *queue)
     free(queue->tail);
 }
 
-int CGC_Queue_Enqueue(CGC_Queue *queue, void *element)
+int CGC_Queue_Enqueue(CGC_Queue *queue, const void *element)
 {
     if(queue->count == queue->capacity)
     {
-        //fprintf(stderr, "cannot enqueue - queue full\n");
         return 0;
     }
 
     if(queue->count > 0)
     {
-        CGC_Queue_Shift_Elements(queue);
-
-        queue->head += queue->element_size;
+        CGC_Queue_Shift_Right(queue);
     }
 
     memcpy(queue->tail, element, queue->element_size);
     queue->count++;
 
-    //fprintf(stdout, "enqueued\n");
     return 1;
 }
 
@@ -57,13 +58,11 @@ int CGC_Queue_Peek(CGC_Queue *queue, void *buffer)
 {
     if(queue->count == 0)
     {
-        //fprintf(stderr, "cannot peek - queue empty\n");
         return 0;
     }
 
     memcpy(buffer, queue->head, queue->element_size);
 
-    //fprintf(stdout, "peeked\n");
     return 1;
 }
 
@@ -71,7 +70,6 @@ int CGC_Queue_Dequeue(CGC_Queue *queue, void *buffer)
 {
     if(queue->count == 0)
     {
-        //fprintf(stderr, "cannot dequeue - queue empty\n");
         return 0;
     }
 
@@ -83,7 +81,6 @@ int CGC_Queue_Dequeue(CGC_Queue *queue, void *buffer)
         queue->head -= queue->element_size;
     }
     
-    //fprintf(stdout, "dequeued\n");
     return 1;
 }
 
@@ -121,13 +118,12 @@ int CGC_Queue_Contains(CGC_Queue *queue, void *element)
     }
 
     int cmp_res;
-    void *next;
-
+    void *compared;
     for(__uint32_t i = 0; i < queue->count + 1; i++)
     {
-        next = queue->tail + (i * queue->element_size);
+        compared = queue->tail + (i * queue->element_size);
 
-        cmp_res = memcmp(next, element, queue->element_size);
+        cmp_res = memcmp(compared, element, queue->element_size);
 
         if(cmp_res == 0)
         {

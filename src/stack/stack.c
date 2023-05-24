@@ -18,45 +18,46 @@ void CGC_Stack_Free(CGC_Stack *stack)
     free(stack->start);
 }
 
-int CGC_Stack_Push(CGC_Stack* stack, const void *element)
+int CGC_Stack_Push(CGC_Stack *stack, const void *element)
 {
     if(stack->count == stack->capacity)
     {
         return 0;
     }
 
-    void *next = stack->top + stack->element_size;
-    memcpy(next, element, stack->element_size);
+    stack->top += stack->element_size;
+    memcpy(stack->top, element, stack->element_size);
     stack->count++;
 
-    stack->top += stack->element_size;
-
     return 1;
 }
 
-int CGC_Stack_Peek(CGC_Stack *stack, void *element)
+int CGC_Stack_Peek(CGC_Stack *stack, void *buffer)
 {
     if(stack->count == 0)
     {
         return 0;
     }
 
-    memcpy(element, stack->top, stack->element_size);
+    memcpy(buffer, stack->top, stack->element_size);
 
     return 1;
 }
 
-int CGC_Stack_Pop(CGC_Stack *stack, void *element)
+int CGC_Stack_Pop(CGC_Stack *stack, void *buffer)
 {
     if(stack->count == 0)
     {
         return 0;
     }
 
-    memcpy(element, stack->top, stack->element_size);
+    memcpy(buffer, stack->top, stack->element_size);
     stack->count--;
 
-    stack->top -= stack->element_size;
+    if(stack->count > 0)
+    {
+        stack->top -= stack->element_size;
+    }
 
     return 1;
 }
@@ -95,13 +96,12 @@ int CGC_Stack_Contains(CGC_Stack *stack, void *element)
     }
 
     int cmp_res;
-    void *next;
-
+    void *compared;
     for(__uint32_t i = 0; i < stack->count + 1; i++)
     {
-        next = stack->start + (i * stack->element_size);
+        compared = stack->start + (i * stack->element_size);
 
-        cmp_res = memcmp(next, element, stack->element_size);
+        cmp_res = memcmp(compared, element, stack->element_size);
 
         if(cmp_res == 0)
         {
