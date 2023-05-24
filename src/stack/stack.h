@@ -8,7 +8,6 @@
 typedef struct CGC_Stack
 {
     void *start;
-    void *next;
     void *top;
     __uint32_t capacity;
     __uint32_t count;

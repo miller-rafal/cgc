@@ -7,7 +7,6 @@ void CGC_Stack_Init(CGC_Stack *stack, __uint32_t capacity, size_t element_size)
 
     stack->element_size = element_size;
     stack->start = malloc(stack->capacity * stack->element_size);
-    stack->next = stack->start;
     stack->top = stack->start;
 }
 
@@ -26,11 +25,11 @@ int CGC_Stack_Push(CGC_Stack* stack, const void *element)
         return 0;
     }
 
-    memcpy(stack->next, element, stack->element_size);
+    void *next = stack->top + stack->element_size;
+    memcpy(next, element, stack->element_size);
     stack->count++;
 
-    stack->top = stack->next;
-    stack->next += stack->element_size;
+    stack->top += stack->element_size;
 
     return 1;
 }
@@ -58,15 +57,6 @@ int CGC_Stack_Pop(CGC_Stack *stack, void *element)
     stack->count--;
 
     stack->top -= stack->element_size;
-    
-    if(stack->count == 0)
-    {
-        stack->next = stack->start;
-    }
-    else
-    {
-        stack->next -= stack->element_size;
-    }
 
     return 1;
 }
@@ -74,7 +64,6 @@ int CGC_Stack_Pop(CGC_Stack *stack, void *element)
 void CGC_Stack_Clear(CGC_Stack *stack)
 {
     stack->count = 0;
-    stack->next = stack->start;
     stack->top = stack->start;
 }
 
@@ -100,19 +89,24 @@ int CGC_Stack_IsFull(CGC_Stack *stack)
 
 int CGC_Stack_Contains(CGC_Stack *stack, void *element)
 {
-    int cmp_res;
-    void *ptr = stack->start;
-
-    for(int i = 0; i < stack->count; i++)
+    if(stack->count == 0)
     {
-        cmp_res = memcmp(ptr, element, stack->element_size);
+        return 0;
+    }
+
+    int cmp_res;
+    void *next;
+
+    for(__uint32_t i = 0; i < stack->count + 1; i++)
+    {
+        next = stack->start + (i * stack->element_size);
+
+        cmp_res = memcmp(next, element, stack->element_size);
 
         if(cmp_res == 0)
         {
             return 1;
         }
-
-        ptr += stack->element_size;
     }
 
     return 0;

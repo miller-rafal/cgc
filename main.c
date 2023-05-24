@@ -8,7 +8,7 @@ void test_stack()
     __uint32_t capacity = CGC_Stack_Capacity(&intstack);
     fprintf(stdout, "stack capacity: %d\n", capacity);
 
-    for(int i = 1; i <= 5; i++)
+    for(int i = 1; i <= 10; i++)
     {
         CGC_Stack_Push(&intstack, &i);
     }
@@ -31,17 +31,24 @@ void test_stack()
     CGC_Stack_Peek(&intstack, &peeked);
     fprintf(stdout, "peeked value:%d\n", peeked);
 
-    int num = 3;
-    int contains2 = CGC_Stack_Contains(&intstack, &num);
+    count = CGC_Stack_Count(&intstack);
+    fprintf(stdout, "stack count: %d\n", count);
 
-    if(contains2)
+    for(int i = 1; i <= 5; i++)
     {
-        fprintf(stdout, "stack contains %d\n", num);
+        int contains = CGC_Stack_Contains(&intstack, &i);
+
+        if(contains)
+        {
+            fprintf(stdout, "stack contains %d\n", i);
+        }
+        else
+        {
+            fprintf(stdout, "stack does not contain %d\n", i);
+        }
     }
-    else
-    {
-        fprintf(stdout, "stack does not contain %d\n", num);
-    }
+
+    
 
     count = CGC_Stack_Count(&intstack);
     fprintf(stdout, "stack count: %d\n", count);
@@ -90,47 +97,63 @@ for(int i = 1; i < 11; i++)
 
 }
 
-void test_list()
+void test_queue()
 {
-    CGC_List intlist;
+    CGC_Queue queue;
+    CGC_Queue_Init(&queue, 5, sizeof(int));
 
-    CGC_List_Init(&intlist, 5, sizeof(int));
+    __uint32_t capacity = CGC_Queue_Capacity(&queue);
+    fprintf(stdout, "queue capacity=%d\n", capacity);
 
-/*
-    int added = 3;
-    CGC_List_Add(&intlist, &added);
-    CGC_List_Add(&intlist, &added);
-
-    fprintf(stdout, "List count=%d\n", intlist.count);
+    __uint32_t count = CGC_Queue_Count(&queue);
+    fprintf(stdout, "queue count=%d\n", count);
 
     for(int i = 1; i <= 10; i++)
     {
-        CGC_List_Add(&intlist, &i);
+        CGC_Queue_Enqueue(&queue, &i);
+    }
+    
+    count = CGC_Queue_Count(&queue);
+    fprintf(stdout, "queue count=%d\n", count);
+
+    int peeked;
+    CGC_Queue_Peek(&queue, &peeked);
+    fprintf(stdout, "peeked value=%d\n", peeked);
+
+    int number = 7;
+    int contains = CGC_Queue_Contains(&queue, &number);
+    if(contains)
+    {
+        fprintf(stdout, "queue contains %d\n", number);
+    }
+    else
+    {
+        fprintf(stdout, "queue does not contain %d\n", number);
     }
 
-    fprintf(stdout, "List count=%d\n", intlist.count);
-
-    int removed;
-    CGC_List_Remove(&intlist, &removed);
-    CGC_List_Remove(&intlist, &removed);
-    fprintf(stdout, "List count=%d\n", intlist.count);
+    count = CGC_Queue_Count(&queue);
+    fprintf(stdout, "queue count=%d\n", count);
 
     for(int i = 0; i < 10; i++)
     {
-        CGC_List_Remove(&intlist, &removed);
+        int dequeued;
+        int res = CGC_Queue_Dequeue(&queue, &dequeued);
+        if(res)
+        {
+            fprintf(stdout, "dequeued=%d\n", dequeued);
+        }
     }
 
-    fprintf(stdout, "List count=%d\n", intlist.count);
+    count = CGC_Queue_Count(&queue);
+    fprintf(stdout, "queue count=%d\n", count);
 
-*/
-    
-    CGC_List_Free(&intlist);
+    CGC_Queue_Free(&queue);
 }
 
 int main()
 {
-    test_stack();
-    //test_list();
+    //test_stack();
+    test_queue();
 
     return 0;
 }
