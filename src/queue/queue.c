@@ -54,6 +54,30 @@ int CGC_Queue_Enqueue(CGC_Queue *queue, const void *element)
     return 1;
 }
 
+int CGC_Queue_Dequeue(CGC_Queue *queue, void *buffer)
+{
+    if(queue->count == 0)
+    {
+        return 0;
+    }
+
+    memcpy(buffer, queue->head, queue->element_size);
+    queue->count--;
+
+    if(queue->count > 0)
+    {
+        queue->head -= queue->element_size;
+    }
+    
+    return 1;
+}
+
+void CGC_Queue_Clear(CGC_Queue *queue)
+{
+    queue->count = 0;
+    queue->head = queue->tail;
+}
+
 int CGC_Queue_Peek(CGC_Queue *queue, void *buffer)
 {
     if(queue->count == 0)
@@ -84,30 +108,6 @@ int CGC_Queue_PeekAt(CGC_Queue *queue, void *buffer, __uint32_t index)
     return 1;
 }
 
-int CGC_Queue_Dequeue(CGC_Queue *queue, void *buffer)
-{
-    if(queue->count == 0)
-    {
-        return 0;
-    }
-
-    memcpy(buffer, queue->head, queue->element_size);
-    queue->count--;
-
-    if(queue->count > 0)
-    {
-        queue->head -= queue->element_size;
-    }
-    
-    return 1;
-}
-
-void CGC_Queue_Clear(CGC_Queue *queue)
-{
-    queue->count = 0;
-    queue->head = queue->tail;
-}
-
 void *CGC_Queue_ElementAt(CGC_Queue *queue, __uint32_t index)
 {
     if(queue->count == 0)
@@ -121,26 +121,6 @@ void *CGC_Queue_ElementAt(CGC_Queue *queue, __uint32_t index)
     }
 
     return queue->tail + (index * queue->element_size);
-}
-
-int CGC_Queue_IsEmpty(CGC_Queue *queue)
-{
-    if(queue->count == 0)
-    {
-        return 1;
-    }
-
-    return 0;
-}
-
-int CGC_Queue_IsFull(CGC_Queue *queue)
-{
-    if(queue->count == queue->capacity)
-    {
-        return 1;
-    }
-
-    return 0;
 }
 
 int CGC_Queue_Contains(CGC_Queue *queue, void *element)
@@ -189,6 +169,26 @@ int CGC_Queue_IndexOf(CGC_Queue *queue, void *element)
     }
 
     return -1;
+}
+
+int CGC_Queue_IsEmpty(CGC_Queue *queue)
+{
+    if(queue->count == 0)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+int CGC_Queue_IsFull(CGC_Queue *queue)
+{
+    if(queue->count == queue->capacity)
+    {
+        return 1;
+    }
+
+    return 0;
 }
 
 __uint32_t CGC_Queue_Count(CGC_Queue *queue)

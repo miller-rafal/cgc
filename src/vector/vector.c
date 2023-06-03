@@ -78,18 +78,6 @@ int CGC_Vector_PopBack(CGC_Vector *vector, void *buffer)
     return 1;
 }
 
-int CGC_Vector_PeekBack(CGC_Vector *vector, void *buffer)
-{
-    if(vector->count == 0)
-    {
-        return 0;
-    }
-
-    memcpy(buffer, vector->back, vector->element_size);
-
-    return 1;
-}
-
 int CGC_Vector_Insert(CGC_Vector *vector, void *element, __uint32_t index)
 {
     if(vector->count == vector->capacity)
@@ -162,6 +150,24 @@ int CGC_Vector_Remove(CGC_Vector *vector, void *buffer, __uint32_t index)
     return 1;
 }
 
+void CGC_Vector_Clear(CGC_Vector *vector)
+{
+    vector->count = 0;
+    vector->back = vector->start;
+}
+
+int CGC_Vector_PeekBack(CGC_Vector *vector, void *buffer)
+{
+    if(vector->count == 0)
+    {
+        return 0;
+    }
+
+    memcpy(buffer, vector->back, vector->element_size);
+
+    return 1;
+}
+
 int CGC_Vector_PeekAt(CGC_Vector *vector, void *buffer, __uint32_t index)
 {
     if(vector->count == 0)
@@ -193,37 +199,6 @@ void *CGC_Vector_ElementAt(CGC_Vector *vector, __uint32_t index)
     }
 
     return vector->start + (index * vector->element_size);
-}
-
-void CGC_Vector_Clear(CGC_Vector *vector)
-{
-    vector->count = 0;
-    vector->back = vector->start;
-}
-
-void CGC_Vector_Quicksort(CGC_Vector *vector, int (*compare)(const void *, const void *))
-{
-    qsort(vector->start, vector->count, vector->element_size, compare);
-}
-
-int CGC_Vector_IsEmpty(CGC_Vector *vector)
-{
-    if(vector->count == 0)
-    {
-        return 1;
-    }
-
-    return 0; 
-}
-
-int CGC_Vector_IsFull(CGC_Vector *vector)
-{
-    if(vector->count == vector->capacity)
-    {
-        return 1;
-    }
-
-    return 0;
 }
 
 int CGC_Vector_Contains(CGC_Vector *vector, void *element)
@@ -272,6 +247,31 @@ int CGC_Vector_IndexOf(CGC_Vector *vector, void *element)
     }
 
     return -1;
+}
+
+void CGC_Vector_Quicksort(CGC_Vector *vector, int (*compare)(const void *element1, const void *element2))
+{
+    qsort(vector->start, vector->count, vector->element_size, compare);
+}
+
+int CGC_Vector_IsEmpty(CGC_Vector *vector)
+{
+    if(vector->count == 0)
+    {
+        return 1;
+    }
+
+    return 0; 
+}
+
+int CGC_Vector_IsFull(CGC_Vector *vector)
+{
+    if(vector->count == vector->capacity)
+    {
+        return 1;
+    }
+
+    return 0;
 }
 
 __uint32_t CGC_Vector_Count(CGC_Vector *vector)

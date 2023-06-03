@@ -36,6 +36,30 @@ int CGC_Stack_Push(CGC_Stack *stack, const void *element)
     return 1;
 }
 
+int CGC_Stack_Pop(CGC_Stack *stack, void *buffer)
+{
+    if(stack->count == 0)
+    {
+        return 0;
+    }
+
+    memcpy(buffer, stack->top, stack->element_size);
+    stack->count--;
+
+    if(stack->count > 0)
+    {
+        stack->top -= stack->element_size;
+    }
+
+    return 1;
+}
+
+void CGC_Stack_Clear(CGC_Stack *stack)
+{
+    stack->count = 0;
+    stack->top = stack->start;
+}
+
 int CGC_Stack_Peek(CGC_Stack *stack, void *buffer)
 {
     if(stack->count == 0)
@@ -66,30 +90,6 @@ int CGC_Stack_PeekAt(CGC_Stack *stack, void *buffer, __uint32_t index)
     return 1;
 }
 
-int CGC_Stack_Pop(CGC_Stack *stack, void *buffer)
-{
-    if(stack->count == 0)
-    {
-        return 0;
-    }
-
-    memcpy(buffer, stack->top, stack->element_size);
-    stack->count--;
-
-    if(stack->count > 0)
-    {
-        stack->top -= stack->element_size;
-    }
-
-    return 1;
-}
-
-void CGC_Stack_Clear(CGC_Stack *stack)
-{
-    stack->count = 0;
-    stack->top = stack->start;
-}
-
 void *CGC_Stack_ElementAt(CGC_Stack *stack, __uint32_t index)
 {
     if(stack->count == 0)
@@ -103,26 +103,6 @@ void *CGC_Stack_ElementAt(CGC_Stack *stack, __uint32_t index)
     }
 
     return stack->start + (index * stack->element_size);
-}
-
-int CGC_Stack_IsEmpty(CGC_Stack *stack)
-{
-    if(stack->count == 0)
-    {
-        return 1;
-    }
-
-    return 0;
-}
-
-int CGC_Stack_IsFull(CGC_Stack *stack)
-{
-    if(stack->count == stack->capacity)
-    {
-        return 1;
-    }
-
-    return 0;
 }
 
 int CGC_Stack_Contains(CGC_Stack *stack, void *element)
@@ -171,6 +151,26 @@ int CGC_Stack_IndexOf(CGC_Stack *stack, void *element)
     }
 
     return -1;
+}
+
+int CGC_Stack_IsEmpty(CGC_Stack *stack)
+{
+    if(stack->count == 0)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+int CGC_Stack_IsFull(CGC_Stack *stack)
+{
+    if(stack->count == stack->capacity)
+    {
+        return 1;
+    }
+
+    return 0;
 }
 
 __uint32_t CGC_Stack_Count(CGC_Stack *stack)
