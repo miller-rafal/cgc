@@ -67,6 +67,25 @@ void search_item(CGC_Vector *vector, int item_number)
     free(searched_item);
 }
 
+int compare(const void *vector1, const void *vector2)
+{
+    vector_item *ptr1 = (vector_item*) vector1;
+    vector_item *ptr2 = (vector_item*) vector2;
+
+    if(ptr1->number < ptr2->number)
+    {
+        return -1;
+    }
+    else if(ptr1->number > ptr2->number)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 int main()
 {
     int capacity = 15;
@@ -136,6 +155,12 @@ int main()
     {
         printf("referenced item: '%d - %s'\n", referenced_item->number, referenced_item->description);
     }
+
+    print_vector(vector);
+
+    printf("sorting vector\n");
+
+    CGC_Vector_Quicksort(vector, &compare);
 
     print_vector(vector);
 

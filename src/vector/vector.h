@@ -25,8 +25,9 @@ int CGC_Vector_PeekAt(CGC_Vector*, void*, __uint32_t);
 int CGC_Vector_Insert(CGC_Vector*, void*, __uint32_t);
 int CGC_Vector_Replace(CGC_Vector*, void*, __uint32_t);
 int CGC_Vector_Remove(CGC_Vector*, void*, __uint32_t);
-
 void CGC_Vector_Clear(CGC_Vector*);
+
+void CGC_Vector_Quicksort(CGC_Vector*, int (*)(const void *, const void *));
 
 void *CGC_Vector_ElementAt(CGC_Vector*, __uint32_t);
 

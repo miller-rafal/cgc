@@ -201,6 +201,11 @@ void CGC_Vector_Clear(CGC_Vector *vector)
     vector->back = vector->start;
 }
 
+void CGC_Vector_Quicksort(CGC_Vector *vector, int (*compare)(const void *, const void *))
+{
+    qsort(vector->start, vector->count, vector->element_size, compare);
+}
+
 int CGC_Vector_IsEmpty(CGC_Vector *vector)
 {
     if(vector->count == 0)
