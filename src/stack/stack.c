@@ -25,7 +25,11 @@ int CGC_Stack_Push(CGC_Stack *stack, const void *element)
         return 0;
     }
 
-    stack->top += stack->element_size;
+    if(stack->count > 0)
+    {
+        stack->top += stack->element_size;
+    }
+
     memcpy(stack->top, element, stack->element_size);
     stack->count++;
 
@@ -40,6 +44,24 @@ int CGC_Stack_Peek(CGC_Stack *stack, void *buffer)
     }
 
     memcpy(buffer, stack->top, stack->element_size);
+
+    return 1;
+}
+
+int CGC_Stack_PeekAt(CGC_Stack *stack, void *buffer, __uint32_t index)
+{
+    if(stack->count == 0)
+    {
+        return 0;
+    }
+
+    if(index > stack->count - 1)
+    {
+        return 0;
+    }
+
+    void *element_address = stack->start + (index * stack->element_size);
+    memcpy(buffer, element_address, stack->element_size);
 
     return 1;
 }
@@ -66,6 +88,21 @@ void CGC_Stack_Clear(CGC_Stack *stack)
 {
     stack->count = 0;
     stack->top = stack->start;
+}
+
+void *CGC_Stack_ElementAt(CGC_Stack *stack, __uint32_t index)
+{
+    if(stack->count == 0)
+    {
+        return NULL;
+    }
+
+    if(index > stack->count - 1)
+    {
+        return NULL;
+    }
+
+    return stack->start + (index * stack->element_size);
 }
 
 int CGC_Stack_IsEmpty(CGC_Stack *stack)
@@ -96,20 +133,44 @@ int CGC_Stack_Contains(CGC_Stack *stack, void *element)
     }
 
     int cmp_res;
-    void *compared;
-    for(__uint32_t i = 0; i < stack->count + 1; i++)
+    void *compared_element = stack->start;
+    for(__uint32_t i = 0; i < stack->count; i++)
     {
-        compared = stack->start + (i * stack->element_size);
-
-        cmp_res = memcmp(compared, element, stack->element_size);
+        cmp_res = memcmp(compared_element, element, stack->element_size);
 
         if(cmp_res == 0)
         {
             return 1;
         }
+
+        compared_element += stack->element_size;
     }
 
     return 0;
+}
+
+int CGC_Stack_IndexOf(CGC_Stack *stack, void *element)
+{
+    if(stack->count == 0)
+    {
+        return -1;
+    }
+
+    int cmp_res;
+    void *compared_element = stack->start;
+    for(__uint32_t i = 0; i < stack->count; i++)
+    {
+        cmp_res = memcmp(compared_element, element, stack->element_size);
+
+        if(cmp_res == 0)
+        {
+            return (int) i;
+        }
+
+        compared_element += stack->element_size;
+    }
+
+    return -1;
 }
 
 __uint32_t CGC_Stack_Count(CGC_Stack *stack)

@@ -19,12 +19,16 @@ void CGC_Queue_Free(CGC_Queue*);
 
 int CGC_Queue_Enqueue(CGC_Queue*, const void*);
 int CGC_Queue_Peek(CGC_Queue*, void*);
+int CGC_Queue_PeekAt(CGC_Queue*, void*, __uint32_t);
 int CGC_Queue_Dequeue(CGC_Queue*, void*);
 void CGC_Queue_Clear(CGC_Queue*);
+
+void *CGC_Queue_ElementAt(CGC_Queue*, __uint32_t);
 
 int CGC_Queue_IsEmpty(CGC_Queue*);
 int CGC_Queue_IsFull(CGC_Queue*);
 int CGC_Queue_Contains(CGC_Queue*, void*);
+int CGC_Queue_IndexOf(CGC_Queue*, void*);
 
 __uint32_t CGC_Queue_Count(CGC_Queue*);
 __uint32_t CGC_Queue_Capacity(CGC_Queue*);
